@@ -1,0 +1,48 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environment variables
+.env
+.env.*
+*.env
+
+# Logs
+*.log
+
+# SQLite and other temporary databases
+*.db
+*.sqlite3
+test_db.db
+
+# Temporary and backup files
+*.bak
+*.swp
+*.tmp
+*.temp
+
+# Build and distribution folders
+build/
+dist/
+*.egg-info/
+
+# Testing and coverage
+htmlcov/
+.coverage
+.tox/
+.pytest_cache/
+
+# IDE/editor config
+.vscode/
+.idea/
+
+# Docker-related
+*.pid
+*.pid.lock
