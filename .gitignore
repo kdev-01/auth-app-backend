@@ -46,3 +46,5 @@ htmlcov/
 # Docker-related
 *.pid
 *.pid.lock
+
+seed_data.py
