@@ -8,14 +8,24 @@ class Settings(BaseSettings):
     # Server configuration
     SECRET_KEY: str
     ALGORITHM: str
-    TOKEN_EXPIRE_MINUTES: int
 
     # Database configuration
     POSTGRES_USER: str
     POSTGRES_DB: str
     DATABASE_PORT: int
     POSTGRES_PASSWORD: SecretStr
-
+    
+    # SMTP configuration
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USER: str
+    SMTP_PASSWORD: str
+    SMTP_USE_TLS: bool
+    DEFAULT_FROM_EMAIL: str
+    
+    # URL configuration
+    FRONTEND_BASE_URL: str
+    
     @property
     def ASYNC_DATABASE_URL(self) -> str:
         return (
