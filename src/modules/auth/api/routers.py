@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, Request, status
-from fastapi.responses import JSONResponse
 
 from src.core.responses.helpers import success_response
 from src.core.security.permissions import check_permissions
@@ -43,7 +42,7 @@ async def get_all_roles(
         status_code=status.HTTP_200_OK,
     )
 
-@router.post("/login", response_class=JSONResponse)
+@router.post("/login")
 async def login(
     data: UserLoginInput,
     use_case: AuthenticateUser = Depends(provider_authenticate_user),

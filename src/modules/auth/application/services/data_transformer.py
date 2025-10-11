@@ -28,15 +28,20 @@ DEFAULT_MENU_SCHEMA: MenuSchema = {
     "home": {"name": "Inicio", "path": "/dashboard"},
     "items": [
         {
-            "name": "Personas",
+            "name": "Comunidad",
             "children": [
                 {"resource": "users", "name": "Usuarios"},
                 {"resource": "students", "name": "Estudiantes"},
             ],
         },
         {"resource": "institutions", "name": "Instituciones educativas"},
-        {"resource": "events", "name": "Eventos"},
-        {"resource": "results", "name": "Resultados"},
+        {
+            "name": "Torneos",
+            "children": [
+                {"resource": "events", "name": "Eventos"},
+                {"resource": "results", "name": "Resultados"},
+            ],
+        },
     ],
 }
 
@@ -55,22 +60,14 @@ class DataTransformerService:
             try:
                 action, resource = self._parse_permission(raw)
             except ValueError:
-                # Aquí podrías loggear el permiso inválido
-                # logger.warning("Invalid permission format: %r", raw)
                 continue
             acc[resource].add(action)
         return {res: sorted(actions) for res, actions in acc.items()}
 
     @staticmethod
     def _parse_permission(raw: Any) -> Tuple[str, str]:
-        """
-        Acepta RPermissionDTO o str. Devuelve (action, resource).
-        Espera un formato 'accion:recurso'.
-        """
-        # Si es DTO, intentar extraer el campo 'name'
         if not isinstance(raw, str):
             raw_val = getattr(raw, "name", None)
-            # fallback a str(raw) si no hay name
             raw = raw_val if raw_val is not None else str(raw)
 
         if not isinstance(raw, str):
@@ -92,7 +89,6 @@ class DataTransformerService:
             try:
                 _, resource = self._parse_permission(raw)
             except ValueError:
-                # Ignorar permisos inválidos
                 continue
             allowed.add(resource)
         return allowed
@@ -119,10 +115,8 @@ class DataTransformerService:
                 name=node.get("name") or self._resource_labels.get(resource, resource.title()),
                 path=node.get("path") or f"/dashboard/{resource}",
             )
-
-        # Empezamos con "Inicio"
+            
         menu: List[MenuItemDTO] = [MenuItemDTO(name="Inicio", path="/dashboard")]
-        # CORRECCIÓN: iterar sobre los items del schema, no sobre el dict entero
         for node in self._menu_schema.get("items", []):
             built = build_item(node)
             if built:

@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 
 from sqlalchemy import Date, ForeignKey, Integer, String
 from sqlalchemy import Enum as SQLEnum
@@ -24,6 +25,10 @@ class EducationalInstitution(Base):
         SQLEnum(InstitutionStatusType, name="institution_status_type_enum"),
         nullable=False,
         default=InstitutionStatusType.AFFILIATED
+    )
+    photo_url: Mapped[Optional[str]] = mapped_column(
+        String,
+        nullable=True
     )
     occurred_at: Mapped[date] = mapped_column(
         Date,

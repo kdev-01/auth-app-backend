@@ -1,5 +1,4 @@
 import uuid
-from typing import List
 
 from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID

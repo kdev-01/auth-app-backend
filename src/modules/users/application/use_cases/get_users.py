@@ -18,6 +18,7 @@ class UserRead:
         data = await self.reader.list_all(exclude_user_id)
         rep_ids = [u.person_id for u in data if u.role.name == ROLE_REPRESENTATIVE]
         assignments_list = await self.representative.get_current_assignments(rep_ids)
+        print(assignments_list)
         assignments_by_user = {
             a.user_person_id: InstitutionDTO(
                 institution_id=a.institution.institution_id,
