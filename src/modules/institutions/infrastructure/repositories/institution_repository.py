@@ -5,10 +5,10 @@ from sqlalchemy.engine import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import ColumnElement
 
-from src.core.database.models import City
-from src.core.database.models.enums import InstitutionStatusType
+from src.modules.locations.infrastructure.models import City
 
 from ...domain.dto import CityDTO, InstitutionDTO
+from ...domain.enums import InstitutionStatusType
 from ..models import EducationalInstitution
 
 
@@ -17,7 +17,7 @@ class InstitutionRepository:
         self.db = db
         self.institution = EducationalInstitution.__table__
         self.city = City.__table__
-    
+
     # Utils
     def _row_to_dto(self, row: RowMapping) -> InstitutionDTO:
         city = None
@@ -32,9 +32,9 @@ class InstitutionRepository:
             status=row["status"],
             created_at=row["created_at"],
             occurred_at=row["occurred_at"],
-            city=city
+            city=city,
         )
-    
+
     # Create
     async def create(
         self,
@@ -43,10 +43,7 @@ class InstitutionRepository:
     ) -> InstitutionDTO:
         query = (
             insert(self.institution)
-            .values(
-                name=name,
-                city_id=city_id
-            )
+            .values(name=name, city_id=city_id)
             .returning(self.institution.c.institution_id)
         )
         result = await self.db.execute(query)
@@ -54,7 +51,7 @@ class InstitutionRepository:
         institution = await self.get_by_id(institution_id)
         assert institution is not None
         return institution
-    
+
     # Read
     def _base_query(self) -> Select:
         return (
@@ -66,30 +63,31 @@ class InstitutionRepository:
                 self.institution.c.occurred_at,
                 self.city.c.city_id.label("city_id"),
                 self.city.c.name.label("city_name"),
-            ).select_from(
+            )
+            .select_from(
                 self.institution.outerjoin(
-                    self.city,
-                    self.institution.c.city_id == self.city.c.city_id
+                    self.city, self.institution.c.city_id == self.city.c.city_id
                 )
-            ).order_by(self.institution.c.status.asc(), self.institution.c.name.asc())
+            )
+            .order_by(self.institution.c.status.asc(), self.institution.c.name.asc())
         )
-    
+
     async def list_all(self) -> List[InstitutionDTO]:
         result = await self.db.execute(self._base_query())
         rows = result.mappings().all()
         return [self._row_to_dto(r) for r in rows]
-    
+
     async def _get_one(self, where: ColumnElement[bool]) -> Optional[InstitutionDTO]:
         result = await self.db.execute(self._base_query().where(where))
         row = result.mappings().one_or_none()
         return self._row_to_dto(row) if row else None
-    
+
     async def get_by_id(self, institution_id: int) -> Optional[InstitutionDTO]:
         return await self._get_one(self.institution.c.institution_id == institution_id)
-    
+
     async def get_by_name(self, name: str) -> Optional[InstitutionDTO]:
         return await self._get_one(func.lower(self.institution.c.name) == name.lower())
-    
+
     # Delete
     async def soft_delete(self, institution_id: int) -> bool:
         query = (
@@ -100,15 +98,14 @@ class InstitutionRepository:
             )
             .values(
                 status=InstitutionStatusType.UNAFFILIATED,
-                occurred_at=cast(func.now(), Date)
+                occurred_at=cast(func.now(), Date),
             )
             .returning(self.institution.c.institution_id)
         )
-        
+
         result = await self.db.execute(query)
         row = result.fetchone()
         if not row:
             return False
-        
+
         return True
-        

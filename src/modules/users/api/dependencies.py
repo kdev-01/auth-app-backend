@@ -1,7 +1,8 @@
 from fastapi import Depends
 
 from src.core.config import get_settings
-from src.core.database.di import SQLAlchemySessionUoW, get_uow
+from src.core.database.di import get_uow
+from src.core.database.uow_session import SQLAlchemySessionUoW
 from src.core.email import IEmailService, provide_email_service
 from src.core.security.dependencies import provide_jwt_service
 from src.core.security.interface import IJWTService
@@ -19,10 +20,8 @@ def provide_list_users(
 ) -> UserRead:
     reader = uow.get(IUserReader)
     representative_reader = uow.get(IRepresentativeReader)
-    return UserRead(
-        reader=reader,
-        representative_reader=representative_reader
-    )
+    return UserRead(reader=reader, representative_reader=representative_reader)
+
 
 def provide_invite_user(
     uow: SQLAlchemySessionUoW = Depends(get_uow),
@@ -40,8 +39,9 @@ def provide_invite_user(
         email=email,
         jwt=jwt,
         frontend_base_url=settings.FRONTEND_BASE_URL,
-        from_email=settings.DEFAULT_FROM_EMAIL
+        from_email=settings.DEFAULT_FROM_EMAIL,
     )
+
 
 def provide_delete_user(
     uow: SQLAlchemySessionUoW = Depends(get_uow),

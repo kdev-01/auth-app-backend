@@ -2,8 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.database.models.enums import TournamentLevelType
-
+from ...domain.enums import TournamentLevelType
 from ..models import Tournament
 
 
@@ -11,7 +10,7 @@ class TournamentRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.tournament = Tournament.__table__
-    
+
     # Create
     """async def create(
         self,
@@ -23,4 +22,3 @@ class TournamentRepository:
         academic_year_id: int
     ):
         pass"""
-    

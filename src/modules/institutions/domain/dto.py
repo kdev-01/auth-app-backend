@@ -3,7 +3,7 @@ from datetime import date
 from typing import Optional
 from uuid import UUID
 
-from src.core.database.models.enums import InstitutionStatusType
+from .enums import InstitutionStatusType
 
 
 # Educational institution
@@ -11,6 +11,7 @@ from src.core.database.models.enums import InstitutionStatusType
 class CityDTO:
     city_id: int
     name: str
+
 
 @dataclass(frozen=True, slots=True)
 class InstitutionDTO:
@@ -21,6 +22,7 @@ class InstitutionDTO:
     occurred_at: Optional[date]
     city: Optional[CityDTO] = None
 
+
 # Representative
 @dataclass(frozen=True, slots=True)
 class RepresentativeDTO:
@@ -28,13 +30,14 @@ class RepresentativeDTO:
     institution_id: int
     unassigned_at: Optional[date] = None
 
+
 @dataclass(frozen=True, slots=True)
 class InstitutionRepresentativeDTO:
     institution_id: int
     name: str
 
+
 @dataclass(frozen=True, slots=True)
 class RepresentativeAssignmentDTO:
     user_person_id: UUID
     institution: InstitutionRepresentativeDTO
-    

@@ -1,25 +1,37 @@
-from src.core.database.models import AcademicYear, City, Document, Person, Role
-from src.modules.auth.infrastructure.models import Permission, RolePermission
+from src.modules.auth.infrastructure.models import Permission, Role, RolePermission
+from src.modules.competition.infrastructure.models import (
+    Match,
+    MatchParticipant,
+    MatchResult,
+    Sanction,
+    SanctionType,
+    StatDefinition,
+    StudentMatchStat,
+)
+from src.modules.documents.infrastructure.models import Document
 from src.modules.institutions.infrastructure.models import (
     EducationalInstitution,
     Representative,
 )
+from src.modules.locations.infrastructure.models import City
 from src.modules.sports.infrastructure.models import (
     AgeCategory,
-    Discipline,
-    Modality,
     Rule,
     Sport,
-    SportCategory,
 )
 from src.modules.students.infrastructure.models import (
+    Gender,
     Student,
     StudentDocument,
-    StudentEnrolment,
 )
 from src.modules.tournaments.infrastructure.models import (
+    AcademicYear,
+    Event,
+    EventRule,
+    Phase,
+    Registration,
     Tournament,
-    TournamentEvent,
+    TournamentInstitution,
     Venue,
 )
-from src.modules.users.infrastructure.models.user import User
+from src.modules.users.infrastructure.models import Person, User

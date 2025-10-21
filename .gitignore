@@ -48,3 +48,4 @@ htmlcov/
 *.pid.lock
 
 seed_data.py
+.cursor/

@@ -14,6 +14,7 @@ from ...domain.ports import IUserReader, IUserWriter
 
 ROLE_REPRESENTATIVE = "Representante educativo"
 
+
 class InviteUser:
     def __init__(
         self,
@@ -43,40 +44,41 @@ class InviteUser:
     ) -> UserDTO:
         if await self.writer.email_exists(email):
             raise EmailAlreadyExists()
-        
+
         created = await self.writer.create(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            role_id=role_id
+            first_name=first_name, last_name=last_name, email=email, role_id=role_id
         )
-        
+
         if created.role.name == ROLE_REPRESENTATIVE:
             if institution_id is None:
-                raise BadRequest("Se requiere institución educativa para el representante.")
-            
+                raise BadRequest(
+                    "Se requiere institución educativa para el representante."
+                )
+
             created_rep = await self.representative_writer.create(
                 user_person_id=created.person_id,
                 institution_id=institution_id,
             )
-            
+
             if not created_rep:
                 raise ConflictError(
                     message="El representante ya existe en la institución.",
-                    code="REPRESENTATIVE_ALREADY_EXISTS"
+                    code="REPRESENTATIVE_ALREADY_EXISTS",
                 )
-        
+
         token = self.jwt.encode_token(
             {
                 "sub": str(created.person_id),
                 "email": created.email,
-                "scope": "invitation"
+                "scope": "invitation",
             },
-            7200
+            7200,
         )
-        
+
         invite_url = f"{self.frontend_base_url}/register?token={token}"
-        html_body = render_template("invitation.html", {"name": first_name, "url": invite_url})
+        html_body = render_template(
+            "invitation.html", {"name": first_name, "url": invite_url}
+        )
         message = EmailMessage(
             subject="Invitación a registrarte en el sistema",
             body=html_body,
@@ -85,6 +87,6 @@ class InviteUser:
             html=True,
         )
         self.email.send_email(message)
-        
+
         created = await self.reader.get_by_id(created.person_id)
         return created

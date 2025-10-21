@@ -5,27 +5,20 @@ from sqlalchemy import DateTime, ForeignKey
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.core.database import Base
-from src.core.database.models.enums import PermissionType
+from src.core.database.base import Base
 from src.core.timezone import ECUADOR_TZ
+
+from ...domain.enums import PermissionType
 
 
 class RolePermission(Base):
     __tablename__ = "role_permissions"
-    
+
     role_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey(
-            "roles.role_id",
-            ondelete="CASCADE"
-        ),
-        primary_key=True
+        ForeignKey("roles.role_id", ondelete="CASCADE"), primary_key=True
     )
     permission_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey(
-            "permissions.permission_id",
-            ondelete="CASCADE"
-        ),
-        primary_key=True
+        ForeignKey("permissions.permission_id", ondelete="CASCADE"), primary_key=True
     )
     type: Mapped[PermissionType] = mapped_column(
         SQLEnum(PermissionType, name="permission_type_enum"),
@@ -38,4 +31,3 @@ class RolePermission(Base):
         onupdate=lambda: datetime.now(ECUADOR_TZ),
         nullable=False,
     )
-    

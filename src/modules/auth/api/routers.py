@@ -13,11 +13,13 @@ from .schemas import RoleOut, UserLoginInput, UserOut
 
 router = APIRouter()
 
-@router.get('/logout')
+
+@router.get("/logout")
 def logout():
     response = success_response(message="Sesión cerrada correctamente.")
     response.delete_cookie(key="access_token")
     return response
+
 
 @router.get("/me/session")
 async def get_permissions(
@@ -30,11 +32,10 @@ async def get_permissions(
         model=UserOut,
         status_code=status.HTTP_200_OK,
     )
-    
+
+
 @router.get("/roles", dependencies=[Depends(check_permissions)])
-async def get_all_roles(
-    use_case: RoleRead = Depends(provider_list_roles)
-):
+async def get_all_roles(use_case: RoleRead = Depends(provider_list_roles)):
     roles = await use_case.retrieve_all_roles()
     return success_response(
         data=roles,
@@ -42,13 +43,14 @@ async def get_all_roles(
         status_code=status.HTTP_200_OK,
     )
 
+
 @router.post("/login")
 async def login(
     data: UserLoginInput,
     use_case: AuthenticateUser = Depends(provider_authenticate_user),
 ):
     user, token = await use_case.login(data.email, data.password)
-    
+
     response = success_response(
         data=user,
         model=UserOut,

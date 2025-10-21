@@ -7,7 +7,7 @@ from sqlalchemy import engine_from_config, pool
 import src.models
 from alembic import context
 from src.core.config import get_settings
-from src.core.database import Base
+from src.core.database.base import Base
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 

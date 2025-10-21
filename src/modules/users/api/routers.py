@@ -12,20 +12,25 @@ from .schemas import UserInvite, UserOut
 
 router = APIRouter()
 
+
 @router.get("/", dependencies=[Depends(check_permissions)])
 async def get_all_users(
-    request: Request,
-    use_case: UserRead = Depends(provide_list_users)
+    request: Request, use_case: UserRead = Depends(provide_list_users)
 ):
     users = await use_case.retrieve_all_users(exclude_user_id=request.state.user_id)
-    
+
     return success_response(
         data=users,
         model=UserOut,
         status_code=status.HTTP_200_OK,
     )
 
-@router.post("/invitation", status_code=status.HTTP_201_CREATED, dependencies=[Depends(check_permissions)])
+
+@router.post(
+    "/invitation",
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(check_permissions)],
+)
 async def invite_user(
     data: UserInvite,
     use_case: InviteUser = Depends(provide_invite_user),
@@ -35,15 +40,16 @@ async def invite_user(
         last_name=data.last_name,
         email=data.email,
         role_id=data.role_id,
-        institution_id=data.institution_id
+        institution_id=data.institution_id,
     )
-    
+
     return success_response(
         data=user,
         model=UserOut,
         status_code=status.HTTP_201_CREATED,
         message="¡La invitación fue enviada con éxito!",
     )
+
 
 @router.delete("/{person_id}", dependencies=[Depends(check_permissions)])
 async def delete_user(
@@ -54,7 +60,7 @@ async def delete_user(
     await use_case.delete(
         target_id=person_id,
         requester_id=request.state.user_id,
-        requester_role=request.state.role
+        requester_role=request.state.role,
     )
-    
+
     return Response(status_code=status.HTTP_204_NO_CONTENT)

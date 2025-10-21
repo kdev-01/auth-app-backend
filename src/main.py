@@ -18,11 +18,12 @@ from src.core.responses.exceptions import (
     validation_exception_handler,
 )
 
-# Protected routes
+# Routes
 from src.modules.auth.api.routers import router as auth_router
 from src.modules.institutions.api.routers import router as institution_router
 from src.modules.locations.api.routers import router as city_router
 from src.modules.sports.api.routes import router as sport_router
+from src.modules.tournaments.api.routers import router as tournament_router
 from src.modules.users.api.routers import router as user_router
 
 
@@ -32,11 +33,14 @@ async def lifespan(app: FastAPI):
     engine = get_engine()
     await engine.dispose()
 
+
 app = FastAPI(title="Backend FDPEN", lifespan=lifespan)
+
 
 @app.get("/")
 def root():
     return {"message": "Hola Mundo :)"}
+
 
 # Security settings
 app.add_middleware(AuthMiddleware)
@@ -56,7 +60,10 @@ app.add_exception_handler(AppException, app_exception_handler)
 
 # Routes
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
-app.include_router(institution_router, prefix="/institutions", tags=["Educational Institutions"])
+app.include_router(
+    institution_router, prefix="/institutions", tags=["Educational Institutions"]
+)
 app.include_router(city_router, prefix="/cities", tags=["Cities"])
 app.include_router(sport_router, prefix="/sports", tags=["Sports"])
 app.include_router(user_router, prefix="/users", tags=["Users"])
+app.include_router(tournament_router, prefix="/tournaments", tags=["Tournaments"])
