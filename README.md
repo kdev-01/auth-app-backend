@@ -1,6 +1,4 @@
-# ⚙️ FDPEN Backend
-
-Backend oficial de la **Federación Deportiva Provincial Estudiantil de Napo** - Plataforma para la **gestión de eventos deportivos estudiantiles**.
+# ⚙️ AuthApp Backend
 
 ---
 
@@ -189,3 +187,4 @@ uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 }
 
 ```
+
